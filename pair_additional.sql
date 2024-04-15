@@ -50,3 +50,28 @@ CREATE OR REPLACE TRIGGER newEmployeeGrouping
     AFTER INSERT ON Employee
     FOR EACH ROW EXECUTE FUNCTION employeeGrouping();
 
+
+
+
+CREATE OR REPLACE FUNCTION get_running_projects(dateIN date)
+RETURNS TABLE (
+	p_id INTEGER,
+	project_name VARCHAR,
+	budget NUMERIC,
+	comission_percentage NUMERIC,
+	p_start_date DATE,
+	p_end_date DATE,
+	c_id INTEGER)
+LANGUAGE plpgsql as
+$$
+DECLARE
+    
+BEGIN
+    RETURN query SELECT * FROM project p
+		where 
+			dateIN < p.p_end_date
+			;
+END;
+$$;
+
+SELECT * from get_running_projects('2030-10-10')
