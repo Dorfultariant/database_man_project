@@ -4,15 +4,17 @@ Procedure that sets all employees salary to the base level based on their job ti
 
 CREATE OR REPLACE PROCEDURE salaryChecking() LANGUAGE plpgsql AS $$
 DECLARE
-    EMP_ID int;
+    EMP record;
+    bs_sal numeric;
 BEGIN
-    FOR EMP_ID IN SELECT e_id FROM Employee LOOP
-        UPDATE Employee SET salary = (SELECT base_salary FROM job_title WHERE j_id = EMP_ID);
+    FOR EMP IN SELECT * FROM Employee LOOP
+        SELECT base_salary INTO bs_sal FROM job_title WHERE j_id = EMP.j_id;
+
+        UPDATE Employee SET salary = bs_sal WHERE e_id = EMP.e_id;
     END LOOP;
     COMMIT;
 END;
 $$;
-
 
 /*
 Procedure that adds 3 months to all temporary contracts
@@ -26,12 +28,10 @@ BEGIN
 END;
 $$;
 
-
 /*
 Procedure that increases salaries by a percentage based on the given percentage. You can also specify the highest salary to be increased (give limit X and salaries that are below X are increased).
 EDIT 20.04.2023: The user can specify the salary limit when calling the procedure. If user doesn't specify one (or gives 0 or null), then the limit is not considered. The percentage can be given in decimals or numbers or what ever you specify, as long as the procedure works.
 */
-
 
 CREATE OR REPLACE PROCEDURE increaseSalariesByPrecentage(raisePercentage numeric, lim numeric) LANGUAGE plpgsql AS $$
 DECLARE
@@ -43,7 +43,7 @@ BEGIN
         THEN
             UPDATE Employee SET salary = salary::numeric * raiseMult;
     ELSE
-        UPDATE Employee SET salary = salary::numeric * raiseMult WHERE (salary::numeric * raiseMult) < lim;
+        UPDATE Employee SET salary = salary::numeric * raiseMult WHERE (salary::numeric) < lim;
     END IF;
     COMMIT;
 END;
