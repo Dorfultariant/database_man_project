@@ -103,32 +103,51 @@ CREATE OR REPLACE TRIGGER newEmployeeGrouping
     FOR EACH ROW EXECUTE FUNCTION employeeGrouping();
 
 
-/*
 
- u_id |       group_title       |     group_rights
-------+-------------------------+-----------------------
-    1 | Database group          | Data addition
-    2 | Network group           | Network configuration
-    3 | Administration group    | System administration
-    5 | Database admin       |        5000
-    6 | Data admin           |        4500
-    7 | System admin         |        5000
-    4 | Officer group           | Super access
-    5 | Supervisor group        | Supervisor
-    6 | HR group                | Human resources
-   12 | HR secretary         |        3500
-    7 | Customer service group  | Customer information
-    8 | Restricted access group | Limited
-    9 | Employee group          | Default
-    1 | Web developer        |        3500
-    2 | Business analyst     |        3500
-    3 | UI designer          |        3500
-    4 | Data analyst         |        4000
-    8 | System architect     |        4500
-    9 | Back-end developer   |        4000
-   10 | Front-end developer  |        4000
-   11 | Full-stack developer |        4500
-   13 | Marketing personnel  |        3500
-   14 | Accountant           |        3500
-   15 | Sales agent          |        3500
-(9 rows)*/
+DROP FUNCTION get_running_projects(date);
+CREATE OR REPLACE FUNCTION get_running_projects(dateIN date)
+RETURNS TABLE (
+	p_id INTEGER,
+	project_name VARCHAR,
+	budget NUMERIC,
+	commission_percentage NUMERIC,
+	p_start_date DATE,
+	p_end_date DATE,
+	
+	c_id INTEGER,
+	c_name VARCHAR,
+	c_type VARCHAR,
+	phone VARCHAR,
+	email VARCHAR,
+	l_id INTEGER
+	)
+LANGUAGE plpgsql as
+$$
+DECLARE
+    
+BEGIN
+    RETURN query SELECT 	
+	p.p_id INTEGER,
+	p.project_name VARCHAR,
+	p.budget NUMERIC,
+	p.commission_percentage NUMERIC,
+	p.p_start_date DATE,
+	p.p_end_date DATE,
+	
+	c.c_id INTEGER,
+	c.c_name VARCHAR,
+	c.c_type VARCHAR,
+	c.phone VARCHAR,
+	c.email VARCHAR,
+	c.l_id INTEGER
+	FROM project p
+		JOIN customer c ON c.c_id = p.c_id
+		where 
+			dateIN BETWEEN p.p_start_date AND p.p_end_date
+-- 			dateIN <= p.p_end_date
+			;
+END;
+$$;
+
+SELECT * from get_running_projects('2000-10-10')
+
