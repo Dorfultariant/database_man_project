@@ -69,9 +69,10 @@ DECLARE
 BEGIN
     RETURN query SELECT * FROM project p
 		where 
-			dateIN < p.p_end_date
+			dateIN <= p.p_end_date
 			;
 END;
 $$;
 
-SELECT * from get_running_projects('2030-10-10')
+-- to test
+-- SELECT * from get_running_projects('2030-10-10')
