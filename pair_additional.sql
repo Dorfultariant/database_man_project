@@ -53,26 +53,49 @@ CREATE OR REPLACE TRIGGER newEmployeeGrouping
 
 
 
+DROP FUNCTION get_running_projects(date);
 CREATE OR REPLACE FUNCTION get_running_projects(dateIN date)
 RETURNS TABLE (
 	p_id INTEGER,
 	project_name VARCHAR,
 	budget NUMERIC,
-	comission_percentage NUMERIC,
+	commission_percentage NUMERIC,
 	p_start_date DATE,
 	p_end_date DATE,
-	c_id INTEGER)
+	
+	c_id INTEGER,
+	c_name VARCHAR,
+	c_type VARCHAR,
+	phone VARCHAR,
+	email VARCHAR,
+	l_id INTEGER
+	)
 LANGUAGE plpgsql as
 $$
 DECLARE
     
 BEGIN
-    RETURN query SELECT * FROM project p
+    RETURN query SELECT 	
+	p.p_id INTEGER,
+	p.project_name VARCHAR,
+	p.budget NUMERIC,
+	p.commission_percentage NUMERIC,
+	p.p_start_date DATE,
+	p.p_end_date DATE,
+	
+	c.c_id INTEGER,
+	c.c_name VARCHAR,
+	c.c_type VARCHAR,
+	c.phone VARCHAR,
+	c.email VARCHAR,
+	c.l_id INTEGER
+	FROM project p
+		JOIN customer c ON c.c_id = p.c_id
 		where 
-			dateIN <= p.p_end_date
+			dateIN BETWEEN p.p_start_date AND p.p_end_date
+-- 			dateIN <= p.p_end_date
 			;
 END;
 $$;
 
--- to test
--- SELECT * from get_running_projects('2030-10-10')
+SELECT * from get_running_projects('2000-10-10')
