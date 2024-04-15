@@ -20,4 +20,17 @@ CREATE VIEW view_customers AS
 		group by customer.c_id,geo.country
 		order by geo.country, customer.c_id;
 
-	
+
+
+
+
+
+------------ for additional task ------------------
+-- Additional view to showcase the skills of each employee and different dates they worked for the company
+CREATE OR REPLACE VIEW skillsOfEmployees AS
+SELECT DISTINCT e.emp_name "Name", e.salary "Salary", STRING_AGG(DISTINCT s.skill, ' ') "Skills", e.contract_start "Started", e.contract_end "Ended"
+    FROM employee e
+    JOIN employee_skills es ON e.e_id = es.e_id
+    JOIN skills s ON s.s_id = es.s_id
+    GROUP BY e.emp_name, e.salary, e.contract_start, e.contract_end
+    ORDER BY e.emp_name, e.contract_start;
