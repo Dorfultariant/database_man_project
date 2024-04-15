@@ -61,7 +61,7 @@ Additional tasks IF done in pairs
 
     A function that returns all projects that were ongoing based on the given date (end date is after the given date) 
         e.g. get_running_projects(date) that returns the project table data joined with the customer data
-# ONGOIND BY RONKI
+# DONE
 
     Two additional views
 #
