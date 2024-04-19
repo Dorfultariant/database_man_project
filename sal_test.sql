@@ -12,7 +12,6 @@ SELECT e_id, contract_type, contract_end FROM Employee WHERE e_id = 4944;
 CALL tempContractAddition();
 SELECT e_id, contract_type, contract_end FROM Employee WHERE e_id = 4944;
 
-
 /*
 Testing the salary raise by percentage PROCEDURE
 */

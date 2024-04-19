@@ -14,7 +14,7 @@ Your task is to do the following:
         One for before inserting a new skill, make sure that the same skill does not already exist
         One for after inserting a new project,  check the customer country and select three employees from that country to start working with the project (i.e. create new project roles)
         One for before updating the employee contract type, make sure that the contract start date is also set to the current date and end date is either 2 years after the start date if contract is of Temporary type, NULL otherwise. (Temporary contract in Finnish is "määräaikainen". It's a contract that has an end date specified).
-#  
+# DONE
 
     (9 %) Create three procedures for the database:
         Procedure that sets all employees salary to the base level based on their job title
@@ -28,8 +28,8 @@ Your task is to do the following:
         Customer table
         Project table
         Note! You may have to create partitions based on the primary key unless you come up with another method
-#
 
+#
 
     (6 %) Create access rights:
         Create three roles - admin, employee, trainee.
@@ -57,7 +57,7 @@ Additional tasks IF done in pairs
         If employee's job title is HR secretary, add them to the HR user group.
         If employee's job title is any of the admin related, add them to the Administration group.
         Everyone else is added to the employee group
-# ONGOING BY TUNXERO
+# DONE
 
     A function that returns all projects that were ongoing based on the given date (end date is after the given date) 
         e.g. get_running_projects(date) that returns the project table data joined with the customer data
@@ -67,4 +67,4 @@ Additional tasks IF done in pairs
 #
 
     An additional role called views_only and give them read access to all created views (and nothing else)
-#
+# DONE (NEED TO ADD ALL FINAL VIEWS TO THE ROLE)
