@@ -4,10 +4,10 @@ this is case insensitive version:
 */
 CREATE OR REPLACE FUNCTION skillCheck() RETURNS TRIGGER LANGUAGE plpgsql AS $$
 DECLARE
-    skill VARCHAR;
+    ace VARCHAR;
 BEGIN
-    FOR skill IN SELECT skill FROM Skills LOOP
-        IF NEW.skill ILIKE skill
+    FOR ace IN SELECT skill FROM Skills LOOP
+        IF NEW.skill ILIKE ace
             THEN
                 RAISE EXCEPTION 'Skill already exists.';
         END IF;
@@ -56,7 +56,9 @@ BEGIN
     SELECT country INTO cust_cnt FROM geo_location WHERE l_id = (
 		SELECT l_id FROM customer WHERE NEW.c_id = c_id);
 
-    doers:= ARRAY(SELECT e_id FROM view_employees WHERE "country" = cust_cnt ORDER BY RANDOM() LIMIT 3);
+    doers:= ARRAY(SELECT e_id FROM view_employees WHERE "country" = cust_cnt
+        ORDER BY RANDOM() LIMIT 3);
+    RAISE NOTICE 'Doers: %', doers;
 
     FOR idx IN 1 .. array_length(doers, 1) LOOP
 		INSERT INTO project_role (e_id, p_id, prole_start_date)
@@ -80,11 +82,6 @@ DECLARE
     d DATE;
 BEGIN
     d:= NOW();
-    -- There is NOT NULL constraint on contract_type, so this becomes undefined behaviour
-    IF NEW.contract_type IS NULL
-        THEN
-            RETURN NEW;
-    END IF;
 
     NEW.contract_start:=d::date;
 
