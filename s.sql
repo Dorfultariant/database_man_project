@@ -1,34 +1,46 @@
-
-
-
-
+-- 5000 rows
+-- SELECT COUNT(*) FROM employee;
+-- 1000 rows
+-- SELECT COUNT(*) FROM project;
+-- SELECT COUNT(*) FROM customer;
 -- SELECT * FROM project_role;
+-- SELECT c.c_id, c.c_name, g.l_id, g.country
+--     FROM customer c
+--     JOIN geo_location g ON g.l_id = c.l_id
+--     LIMIT 10;
 
--- SELECT * FROM Employee WHERE supervisor is not null;
+SELECT * FROM employee WHERE contract_type = 'Temporary' LIMIT 50;
+SELECT * FROM employee WHERE contract_type ILIKE '%temporary%' LIMIT 50;
+SELECT * FROM employee WHERE contract_type ILIKE '%määräaikainen%' LIMIT 50;
 
--- SELECT * FROM user_group;
 /*
-SELECT * FROM job_title;
-SELECT * FROM employee ORDER BY e_id DESC LIMIT 20;*/
--- SELECT * FROM skills;
+SELECT * FROM customer ORDER BY c_id LIMIT 10;
+SELECT * FROM geo_location;
 
-    /*
-DELETE FROM employee_user_group WHERE e_id = 5045;
-DELETE FROM employee_user_group WHERE e_id = 5044;
-DELETE FROM employee_user_group WHERE e_id = 5043;
-DELETE FROM employee_user_group WHERE e_id = 5042;
-DELETE FROM employee_user_group WHERE e_id = 5041;
+SELECT e.e_id
+    FROM headquarters h
+    JOIN department d ON d.hid = h.h_id
+    JOIN employee e ON d.d_id = e.d_id
+    WHERE h.l_id = 748;*/
 
 
-DELETE FROM Employee WHERE e_id = 5045;
-DELETE FROM Employee WHERE e_id = 5044;
-DELETE FROM Employee WHERE e_id = 5043;
-DELETE FROM Employee WHERE e_id = 5042;
-DELETE FROM Employee WHERE e_id = 5041;
-*/
+/*
+SELECT e_id FROM employee WHERE d_id = (
+            SELECT d_id FROM department WHERE hid = (
+                SELECT h_id FROM headquarters WHERE l_id = (
+                    SELECT l_id FROM geo_location WHERE country = 'Finland' LIMIT 1)
+                    )
+                ) LIMIT 3;*/
+/*
+CREATE OR REPLACE VIEW employeeCountry AS
+SELECT e.e_id "EID", e.emp_name "Name", g.country "Country"
+    FROM employee e
+    JOIN department d ON d.d_id = e.d_id
+    JOIN headquarters h ON d.hid = h.h_id
+    JOIN geo_location g ON g.l_id = h.l_id
+    ORDER BY e.e_id;*/
 
-SELECT u_id, group_title FROM user_group WHERE u_id = (SELECT u_id FROM employee_user_group WHERE e_id = 5046);
-SELECT u_id, group_title FROM user_group WHERE u_id = (SELECT u_id FROM employee_user_group WHERE e_id = 5047);
-SELECT u_id, group_title FROM user_group WHERE u_id = (SELECT u_id FROM employee_user_group WHERE e_id = 5048);
-SELECT u_id, group_title FROM user_group WHERE u_id = (SELECT u_id FROM employee_user_group WHERE e_id = 5049);
-SELECT u_id, group_title FROM user_group WHERE u_id = (SELECT u_id FROM employee_user_group WHERE e_id = 5050);
+-- SELECT * FROM view_employees WHERE country = 'Finland' LIMIT 10;
+-- SELECT * FROM employeeCountry WHERE "Country" = 'United Kingdom';
+
+
