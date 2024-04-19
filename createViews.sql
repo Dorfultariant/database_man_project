@@ -50,7 +50,4 @@ SELECT * FROM view_customers LIMIT 10;
 SELECT * FROM skillsOfEmployees LIMIT 10;
 
 
--- Additional task, view_only role
-CREATE ROLE view_only WITH LOGIN;
-GRANT SELECT ON view_customers, view_employees, skillsOfEmployees TO view_only;
 

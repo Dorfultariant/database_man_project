@@ -1,11 +1,5 @@
 
 
-/* ### BEGIN NOTE ### */
--- Role with access to only generatated views
--- is done in the createViews.sql file as all of our views will be there and
--- listed as accessible for the role
-/* ### END NOTE ### */
-
 -- Function to calculate the skill based salary bonus total
 CREATE OR REPLACE FUNCTION skillSalaryBonus(emp_id int) RETURNS INT LANGUAGE plpgsql AS $$
 DECLARE
@@ -25,7 +19,9 @@ CREATE OR REPLACE VIEW skillsOfEmployees AS
 SELECT DISTINCT
     e.emp_name "Name",
     e.salary "Salary",
-    skillSalaryBonus(e.e_id) "Skill Bonus",
+    (SELECT SUM(salary_benefit_value) FROM skills
+            WHERE salary_benefit = True AND s_id IN (
+                SELECT s_id FROM employee_skills WHERE e_id = e.e_id)) "Skill Bonus",
     STRING_AGG(DISTINCT s.skill, ' ') "Skills",
     e.contract_start "Started",
     e.contract_end "Ended"
@@ -149,6 +145,22 @@ BEGIN
 		JOIN customer c ON c.c_id = p.c_id
 		where 
 			dateIN BETWEEN p.p_start_date AND p.p_end_date;
+END;
+$$;
+
+
+-- Additional task, view_only role
+CREATE ROLE view_only WITH LOGIN;
+--GRANT SELECT ON view_customers, view_employees, skillsOfEmployees TO view_only;
+-- Or the dynamic way:
+DO
+$$
+DECLARE
+	v_name VARCHAR;
+BEGIN
+	FOR v_name IN (SELECT table_name FROM information_schema.views WHERE table_schema = 'public') LOOP
+		EXECUTE format('GRANT SELECT ON %I TO view_only', v_name);
+	END LOOP;
 END;
 $$;
 
