@@ -8,7 +8,7 @@ Your task is to do the following:
         Idea of views is to combine data from various tables to provide an easier access to the combined information. 
         The view does not have to be the final query result (i.e. View is used for easier access and then queried again for more detailed information)
         Each view should join at least two tables (not including linking tables)
-# 2 Done
+# Done
     
     (15 % ) Create three triggers for the database:
         One for before inserting a new skill, make sure that the same skill does not already exist
@@ -64,7 +64,7 @@ Additional tasks IF done in pairs
 # DONE
 
     Two additional views
-#
+# DONE
 
     An additional role called views_only and give them read access to all created views (and nothing else)
 # DONE (NEED TO ADD ALL FINAL VIEWS TO THE ROLE)

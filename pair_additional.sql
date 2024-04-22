@@ -1,5 +1,4 @@
 
-
 -- Function to calculate the skill based salary bonus total
 CREATE OR REPLACE FUNCTION skillSalaryBonus(emp_id int) RETURNS INT LANGUAGE plpgsql AS $$
 DECLARE
@@ -14,6 +13,9 @@ $$;
 
 
 -- Additional view to showcase the skills of each employee and different dates they worked for the company
+
+-- NOTE: THIS IS DUPLICATE !! THIS CAN ALSO BE FOUND IN createViews.sql file
+
 DROP VIEW skillsOfEmployees;
 CREATE OR REPLACE VIEW skillsOfEmployees AS
 SELECT DISTINCT
@@ -31,6 +33,29 @@ FROM employee e
     JOIN skills s ON s.s_id = es.s_id
     GROUP BY e.e_id, e.emp_name, e.salary, e.contract_start, e.contract_end
     ORDER BY e.emp_name, e.contract_start;
+
+
+
+--------------- FOR ADDITIONAL TASK ------------
+-- Shows headquarters different departments and their employee groups
+-- providing information about type of users in a department.
+
+-- NOTE: THIS IS DUPLICATE !! WHICH CAN ALSO BE FOUND IN createViews.sql file
+
+DROP VIEW groupingAndDepartments;
+CREATE OR REPLACE VIEW groupingAndDepartments AS
+	SELECT
+		hq.hq_name "Headquarter",
+		d.dep_name "Department",
+		ug.group_title "Group"
+FROM Employee e
+	JOIN department d 			ON e.d_id = d.d_id
+	JOIN headquarters hq 		ON hq.h_id = d.hid
+	JOIN employee_user_group eug ON eug.e_id = e.e_id
+	JOIN user_group ug 			ON ug.u_id = eug.u_id
+GROUP BY hq.hq_name, d.dep_name, ug.group_title
+ORDER BY hq.hq_name, d.dep_name, ug.group_title;
+
 
 
 -- Procedure to calculate the skill based salary for all Employees

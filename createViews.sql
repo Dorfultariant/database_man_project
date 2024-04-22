@@ -22,7 +22,7 @@ DROP VIEW view_customers;
 CREATE VIEW view_customers AS
 	SELECT customer.c_id,
 		customer.c_name,
-		geo.country ,
+		geo.country,
 		STRING_AGG(pro.p_id::text, ',') p_id
 	FROM customer
 		JOIN geo_location geo ON geo.l_id = customer.l_id
@@ -48,6 +48,84 @@ FROM employee e
 SELECT * FROM view_employees LIMIT 10;
 SELECT * FROM view_customers LIMIT 10;
 SELECT * FROM skillsOfEmployees LIMIT 10;
+
+
+--------------- FOR ADDITIONAL TASK ------------
+-- Shows headquarters different departments and their employee groups
+-- providing information about type of users in a department.
+DROP VIEW groupingAndDepartments;
+CREATE OR REPLACE VIEW groupingAndDepartments AS
+	SELECT
+		hq.hq_name "Headquarter",
+		d.dep_name "Department",
+		ug.group_title "Group"
+FROM Employee e
+	JOIN department d 			ON e.d_id = d.d_id
+	JOIN headquarters hq 		ON hq.h_id = d.hid
+	JOIN employee_user_group eug ON eug.e_id = e.e_id
+	JOIN user_group ug 			ON ug.u_id = eug.u_id
+GROUP BY hq.hq_name, d.dep_name, ug.group_title
+ORDER BY hq.hq_name, d.dep_name, ug.group_title;
+
+
+/*
+	This view shows information for each project, budget, commission,
+	startdate, customer and their country. This way a lot of important and interesting information is shown for each project.
+
+	This also allows to search from the view based on the project name, customer or other distinct aspect.
+*/
+
+DROP VIEW projectBasicInformation;
+CREATE OR REPLACE VIEW projectBasicInformation AS
+	SELECT
+		p.project_name "Project Name",
+		TO_CHAR(p.budget, '999G999G999') "Budget",
+		p.commission_percentage "Commission (%)",
+		p.p_start_date "Started",
+		c.c_name "Client",
+		g.country "Client Country"
+	FROM project p
+		JOIN customer c ON c.c_id = p.c_id
+		JOIN geo_location g ON g.l_id = c.l_id
+	GROUP BY p.project_name,
+		p.budget,
+		p.commission_percentage,
+		p.p_start_date,
+		c.c_name,
+		g.country
+	ORDER BY p.project_name, p.p_start_date;
+
+
+/*
+	This view is addition to previous project related views, but this showcases the
+	employees and their positions for each project and projects stakeholder.
+*/
+
+DROP VIEW projectEmployeeInformation;
+CREATE OR REPLACE VIEW projectEmployeeInformation AS
+	SELECT
+		p.project_name "Project",
+		c.c_name "Customer",
+		e.emp_name "Employee",
+		jt.title "Employee Position"
+	FROM project p
+		JOIN project_role pl ON p.p_id = pl.p_id
+		JOIN Employee e ON e.e_id = pl.e_id
+		JOIN customer c ON c.c_id = p.c_id
+		JOIN job_title jt ON jt.j_id = e.j_id
+	GROUP BY p.project_name,
+		c.c_name,
+		e.emp_name,
+		jt.title
+	ORDER BY "Project", "Customer";
+
+
+
+
+
+
+
+
 
 
 
