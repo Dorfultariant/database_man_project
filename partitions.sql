@@ -1,62 +1,80 @@
-BEGIN;
--- Rename current table to old_employee
-ALTER TABLE employee RENAME TO old_employee;
+--------- CUSTOMER PARTITION ---------------
+CREATE TABLE customer_new (
+	c_id SERIAL,
+	c_name VARCHAR NOT NULL DEFAULT 'No Name',
+	c_type VARCHAR,
+	phone VARCHAR,
+	email VARCHAR,
+	l_id INTEGER,
+	PRIMARY KEY (c_id),
+	CONSTRAINT customer_l_id_fkey
+	FOREIGN KEY (l_id) REFERENCES geo_location(l_id)
+	)PARTITION BY RANGE(c_id);
 
--- Create a new table with partition
-CREATE TABLE employee (
-    e_id INT NOT NULL,
-    emp_name VARCHAR(100),
-    email VARCHAR(100),
-    contract_type VARCHAR(100) NOT NULL,
-    contract_start DATE NOT NULL,
-    contract_end DATE,
-    salary INT,
-    supervisor INT,
-    d_id INT,
-    j_id INT,
-    PRIMARY KEY (e_id, salary),
-    FOREIGN KEY (d_id) REFERENCES department(d_id),
-    FOREIGN KEY (j_id) REFERENCES job_title(j_id)
-) PARTITION BY RANGE (salary);
+-- create partitions
+CREATE TABLE customer_1 PARTITION OF customer_new
+	FOR VALUES FROM (MINVALUE) TO (250);
+CREATE TABLE customer_2 PARTITION OF customer_new
+	FOR VALUES FROM (251) TO (500);
+CREATE TABLE customer_3 PARTITION OF customer_new
+	FOR VALUES FROM (501) TO (750);
 
-
-CREATE TABLE employee_salary_low PARTITION OF employee FOR VALUES FROM (0) TO (4000);
-CREATE TABLE employee_salary_medium PARTITION OF employee FOR VALUES FROM (4001) TO (6000);
-CREATE TABLE employee_salary_high PARTITION OF employee FOR VALUES FROM (6001) TO (10000);
-CREATE TABLE employee_default PARTITION OF employee DEFAULT;
+CREATE TABLE customer_default PARTITION OF customer_new DEFAULT;
 
 
-INSERT INTO employee_salary_low SELECT * FROM old_employee
-    WHERE salary < 4000;
+-- add data from not partitioned to partitioned table
+INSERT INTO customer_new
+	SELECT * FROM customer;
 
-INSERT INTO employee_salary_medium SELECT * FROM old_employee
-    WHERE salary BETWEEN 4001 AND 6000;
+-- add default constraints
+ALTER TABLE project ADD CONSTRAINT project_c_id_fkey_new FOREIGN KEY (c_id) REFERENCES customer_new(c_id);
 
-INSERT INTO employee_salary_high SELECT * FROM old_employee
-    WHERE salary BETWEEN 6001 AND 10000;
+-- change names
+ALTER TABLE customer RENAME TO customer_old;
+ALTER TABLE customer_new RENAME TO customer;
 
-INSERT INTO employee_default SELECT * FROM old_employee WHERE salary > 10000;
+--last remove old constraints and  delete old not partitioned table
+ALTER TABLE project drop constraint project_c_id_fkey;
+DROP TABLE customer_old;
+--------- EOF CUSTOMER PARTITION ---------------
+--------- PROJECT PARTITION ---------------
+CREATE TABLE project_new (
+	p_id INTEGER NOT NULL,
+	project_name VARCHAR,
+	budget NUMERIC,
+	commission_percentage NUMERIC,
+	p_start_date DATE,
+	p_end_date DATE,
+    c_id INTEGER,
+	PRIMARY KEY (p_id),
+	CONSTRAINT project_c_id_fkey
+	FOREIGN KEY (c_id) REFERENCES customer(c_id)
+	)PARTITION BY RANGE(p_id);
+
+-- create partitions
+CREATE TABLE project_1 PARTITION OF project_new
+	FOR VALUES FROM (MINVALUE) TO (250);
+CREATE TABLE project_2 PARTITION OF project_new
+	FOR VALUES FROM (251) TO (500);
+CREATE TABLE project_3 PARTITION OF project_new
+	FOR VALUES FROM (501) TO (750);
+
+CREATE TABLE project_default PARTITION OF project_new DEFAULT;
 
 
--- Drop the old constraint
-ALTER TABLE employee_skills DROP CONSTRAINT employee_skills_e_id_fkey;
+-- add data from not partitioned to partitioned table
+INSERT INTO project_new
+	SELECT * FROM project;
 
--- Add a new constraint referencing the new employee table
-ALTER TABLE employee_skills ADD CONSTRAINT employee_skills_e_id_fkey FOREIGN KEY (e_id) REFERENCES employee (e_id);
+-- add default constraints
 
--- Drop the old constraint
-ALTER TABLE user_group DROP CONSTRAINT employee_user_group_e_id_fkey;
+ALTER TABLE project_role ADD CONSTRAINT project_role_p_id_fkey_new FOREIGN KEY (p_id) REFERENCES project_new(p_id);
+-- change names
+ALTER TABLE project RENAME TO project_old;
+ALTER TABLE project_new RENAME TO project;
 
--- Add a new constraint referencing the new employee table
-ALTER TABLE user_group ADD CONSTRAINT employee_user_group_e_id_fkey FOREIGN KEY (e_id) REFERENCES employee (e_id);
-
--- Drop the old constraint
-ALTER TABLE project_role DROP CONSTRAINT project_role_e_id_fkey;
-
--- Add a new constraint referencing the new employee table
-ALTER TABLE project_role ADD CONSTRAINT project_role_e_id_fkey FOREIGN KEY (e_id) REFERENCES employee (e_id);
-
-
-DROP TABLE old_employee;
-
-COMMIT;
+--last remove old constraints and  delete old not partitioned table
+ALTER TABLE project_role drop constraint project_role_p_id_fkey;
+DROP TABLE project_old;
+-- rollback;
+--------- EOF PROJECT PARTITION ---------------
