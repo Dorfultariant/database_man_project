@@ -14,7 +14,7 @@ CREATE TABLE customer_new (
 	PRIMARY KEY (c_id),
 	CONSTRAINT customer_l_id_fkey
 	FOREIGN KEY (l_id) REFERENCES geo_location(l_id)
-	)PARTITION BY RANGE(c_id);
+	) PARTITION BY RANGE(c_id);
 
 -- create partitions
 CREATE TABLE customer_1 PARTITION OF customer_new
@@ -135,7 +135,6 @@ CREATE OR REPLACE PROCEDURE tempContractAddition() LANGUAGE plpgsql AS $$
 BEGIN
     UPDATE Employee SET contract_end  = contract_end + (interval '3 months')
             WHERE contract_type ILIKE '%temporary%' OR contract_type ILIKE '%määräaikainen%';
-    -- COMMIT;
 END;
 $$;
 
