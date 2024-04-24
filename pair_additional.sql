@@ -57,6 +57,18 @@ GROUP BY hq.hq_name, d.dep_name, ug.group_title
 ORDER BY hq.hq_name, d.dep_name, ug.group_title;
 
 
+-- Function to calculate the skill based salary bonus total
+CREATE OR REPLACE FUNCTION skillSalaryBonus(emp_id int) RETURNS INT LANGUAGE plpgsql AS $$
+DECLARE
+    total_benefit numeric;
+BEGIN
+    SELECT SUM(salary_benefit_value) INTO total_benefit FROM skills
+            WHERE salary_benefit = True AND s_id IN (
+                SELECT s_id FROM employee_skills WHERE e_id = emp_id);
+    RETURN total_benefit;
+END;
+$$;
+
 
 -- Procedure to calculate the skill based salary for all Employees
 CREATE OR REPLACE PROCEDURE skillBasedSalaryCalculation() LANGUAGE plpgsql AS $$
