@@ -135,7 +135,7 @@ CREATE OR REPLACE PROCEDURE tempContractAddition() LANGUAGE plpgsql AS $$
 BEGIN
     UPDATE Employee SET contract_end  = contract_end + (interval '3 months')
             WHERE contract_type ILIKE '%temporary%' OR contract_type ILIKE '%määräaikainen%';
-    COMMIT;
+    -- COMMIT;
 END;
 $$;
 
