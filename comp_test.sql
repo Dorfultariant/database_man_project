@@ -124,11 +124,11 @@ INSERT INTO Skills (skill, salary_benefit) VALUES ('C', False);
 BEGIN;
 SELECT * FROM customer WHERE c_id = 1 or c_id = 8;
 -- New project after insert rolesetup test
-INSERT INTO project (p_id, project_name, budget, commission_percentage, p_start_date, c_id)
-    VALUES(202400,'Project For The Company', 1000000, 20, NOW()::date, 1);
+INSERT INTO project (project_name, budget, commission_percentage, p_start_date, c_id)
+    VALUES('Project For The Company', 1000000, 20, NOW()::date, 1);
 
-INSERT INTO project (p_id, project_name, budget, commission_percentage, p_start_date, c_id)
-    VALUES(202401,'Kukkahattu projekti', 100000, 50, NOW()::date, 8);
+INSERT INTO project (project_name, budget, commission_percentage, p_start_date, c_id)
+    VALUES('Kukkahattu projekti', 100000, 50, NOW()::date, 8);
 
 ROLLBACK;
 

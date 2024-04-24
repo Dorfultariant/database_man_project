@@ -39,8 +39,6 @@ DROP TABLE customer_old;
 --------- EOF CUSTOMER PARTITION ---------------
 
 
-
-
 --------- PROJECT PARTITION ---------------
 CREATE TABLE project_new (
 	p_id INTEGER SERIAL NOT NULL,

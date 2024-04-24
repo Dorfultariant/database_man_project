@@ -190,6 +190,9 @@ $$;
 CREATE ROLE view_only WITH LOGIN;
 --GRANT SELECT ON view_customers, view_employees, skillsOfEmployees TO view_only;
 -- Or the dynamic way:
+-- https://dba.stackexchange.com/questions/23836/how-to-list-all-views-in-sql-in-postgresql
+-- https://stackoverflow.com/questions/41335423/grant-access-to-views-in-postgresql
+-- https://www.postgresql.org/docs/current/sql-do.html
 DO
 $$
 DECLARE
