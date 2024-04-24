@@ -31,42 +31,6 @@ CREATE VIEW view_customers AS
 		order by geo.country, customer.c_id;
 
 
------------- for additional task ------------------
--- Additional view to showcase the skills of each employee and different dates they worked for the company
-CREATE OR REPLACE VIEW skillsOfEmployees AS
-SELECT DISTINCT e.emp_name "Name",
-	e.salary "Salary",
-	STRING_AGG(DISTINCT s.skill, ' ') "Skills",
-	e.contract_start "Started",
-	e.contract_end "Ended"
-FROM employee e
-    JOIN employee_skills es ON e.e_id = es.e_id
-    JOIN skills s 			ON s.s_id = es.s_id
-    GROUP BY e.emp_name, e.salary, e.contract_start, e.contract_end
-    ORDER BY e.emp_name, e.contract_start;
-
-SELECT * FROM view_employees LIMIT 10;
-SELECT * FROM view_customers LIMIT 10;
-SELECT * FROM skillsOfEmployees LIMIT 10;
-
-
---------------- FOR ADDITIONAL TASK ------------
--- Shows headquarters different departments and their employee groups
--- providing information about type of users in a department.
-DROP VIEW groupingAndDepartments;
-CREATE OR REPLACE VIEW groupingAndDepartments AS
-	SELECT
-		hq.hq_name "Headquarter",
-		d.dep_name "Department",
-		ug.group_title "Group"
-FROM Employee e
-	JOIN department d 			ON e.d_id = d.d_id
-	JOIN headquarters hq 		ON hq.h_id = d.hid
-	JOIN employee_user_group eug ON eug.e_id = e.e_id
-	JOIN user_group ug 			ON ug.u_id = eug.u_id
-GROUP BY hq.hq_name, d.dep_name, ug.group_title
-ORDER BY hq.hq_name, d.dep_name, ug.group_title;
-
 
 /*
 	This view shows information for each project, budget, commission,
@@ -75,7 +39,7 @@ ORDER BY hq.hq_name, d.dep_name, ug.group_title;
 	This also allows to search from the view based on the project name, customer or other distinct aspect.
 */
 
-DROP VIEW projectBasicInformation;
+--DROP VIEW projectBasicInformation;
 CREATE OR REPLACE VIEW projectBasicInformation AS
 	SELECT
 		p.project_name "Project Name",
@@ -101,7 +65,7 @@ CREATE OR REPLACE VIEW projectBasicInformation AS
 	employees and their positions for each project and projects stakeholder.
 */
 
-DROP VIEW projectEmployeeInformation;
+--DROP VIEW projectEmployeeInformation;
 CREATE OR REPLACE VIEW projectEmployeeInformation AS
 	SELECT
 		p.project_name "Project",
@@ -120,7 +84,44 @@ CREATE OR REPLACE VIEW projectEmployeeInformation AS
 	ORDER BY "Project", "Customer";
 
 
+------------ for additional task ------------------
+-- Additional view to showcase the skills of each employee and different dates they worked for the company
+--DROP VIEW skillsOfEmployees;
+CREATE OR REPLACE VIEW skillsOfEmployees AS
+SELECT DISTINCT
+    e.emp_name "Name",
+    e.salary "Salary",
+    (SELECT SUM(salary_benefit_value) FROM skills
+            WHERE salary_benefit = True AND s_id IN (
+                SELECT s_id FROM employee_skills WHERE e_id = e.e_id)) "Skill Bonus",
+    STRING_AGG(DISTINCT s.skill, ' ') "Skills",
+    e.contract_start "Started",
+    e.contract_end "Ended"
 
+FROM employee e
+    JOIN employee_skills es ON e.e_id = es.e_id
+    JOIN skills s ON s.s_id = es.s_id
+    GROUP BY e.e_id, e.emp_name, e.salary, e.contract_start, e.contract_end
+    ORDER BY e.emp_name, e.contract_start;
+
+
+
+--------------- FOR ADDITIONAL TASK ------------
+-- Shows headquarters different departments and their employee groups
+-- providing information about type of users in a department.
+--DROP VIEW groupingAndDepartments;
+CREATE OR REPLACE VIEW groupingAndDepartments AS
+	SELECT
+		hq.hq_name "Headquarter",
+		d.dep_name "Department",
+		ug.group_title "Group"
+FROM Employee e
+	JOIN department d 			ON e.d_id = d.d_id
+	JOIN headquarters hq 		ON hq.h_id = d.hid
+	JOIN employee_user_group eug ON eug.e_id = e.e_id
+	JOIN user_group ug 			ON ug.u_id = eug.u_id
+GROUP BY hq.hq_name, d.dep_name, ug.group_title
+ORDER BY hq.hq_name, d.dep_name, ug.group_title;
 
 
 
