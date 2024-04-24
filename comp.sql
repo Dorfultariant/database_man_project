@@ -158,7 +158,6 @@ BEGIN
         UPDATE Employee SET salary = salary::numeric * raiseMult
             WHERE (salary::numeric) < lim;
     END IF;
-    COMMIT;
 END;
 $$;
 
@@ -351,7 +350,6 @@ BEGIN
 
     doers:= ARRAY(SELECT e_id FROM view_employees WHERE "country" = cust_cnt
         ORDER BY RANDOM() LIMIT 3);
-    RAISE NOTICE 'Doers: %', doers;
 
     FOR idx IN 1 .. array_length(doers, 1) LOOP
 		INSERT INTO project_role (e_id, p_id, prole_start_date)
@@ -426,7 +424,6 @@ BEGIN
                 UPDATE Employee SET salary = salary::numeric + total_benefit::numeric WHERE EMP.e_id = e_id;
         END IF;
     END LOOP;
-    COMMIT;
 END;
 $$;
 

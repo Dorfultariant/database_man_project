@@ -37,9 +37,13 @@ ALTER TABLE customer_new RENAME TO customer;
 ALTER TABLE project drop constraint project_c_id_fkey;
 DROP TABLE customer_old;
 --------- EOF CUSTOMER PARTITION ---------------
+
+
+
+
 --------- PROJECT PARTITION ---------------
 CREATE TABLE project_new (
-	p_id INTEGER NOT NULL,
+	p_id INTEGER SERIAL NOT NULL,
 	project_name VARCHAR,
 	budget NUMERIC,
 	commission_percentage NUMERIC,
