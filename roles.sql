@@ -1,6 +1,5 @@
 /*
     CREATE BASIC ROLES
-
     NOTE view_only is at the bottom after VIEWs
 */
 
@@ -23,10 +22,10 @@ GRANT SELECT (e_id, emp_name, email) ON employee TO trainee;
 DO
 $$
 DECLARE
-	v_name VARCHAR;
+	v VARCHAR;
 BEGIN
-	FOR v_name IN (SELECT table_name FROM information_schema.views WHERE table_schema = 'public') LOOP
-		EXECUTE format('GRANT SELECT ON %I TO view_only', v_name);
+	FOR v IN (SELECT table_name FROM information_schema.views WHERE table_schema = 'public') LOOP
+		EXECUTE format('GRANT SELECT ON %I TO view_only', v);
 	END LOOP;
 END;
 $$;
