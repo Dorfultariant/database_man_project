@@ -8,6 +8,7 @@
 CREATE ROLE admin SUPERUSER LOGIN PASSWORD 'kolo';
 CREATE ROLE employee WITH LOGIN;
 CREATE ROLE trainee WITH LOGIN;
+CREATE ROLE view_only WITH LOGIN;
 -- ALTER ROLE trainee WITH LOGIN;
 
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO employee;
@@ -16,7 +17,7 @@ GRANT SELECT (e_id, emp_name, email) ON employee TO trainee;
 
 
 -- Additional task, view_only role
-CREATE ROLE view_only WITH LOGIN;
+
 --GRANT SELECT ON view_customers, view_employees, skillsOfEmployees TO view_only;
 -- Or the dynamic way:
 DO
